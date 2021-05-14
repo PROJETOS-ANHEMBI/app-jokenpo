@@ -11,14 +11,13 @@ import java.rmi.registry.Registry;
 import java.rmi.server.UnicastRemoteObject;
 
 public class Servidor {
-
     public static void main(String[] args) {
 
         try {
 
             // Inicializa objetos que serão utilizados para iniciar o servidor
             Registry registro = null;
-            Mensagem obj = new Mensagem();
+            Partida obj = new Partida();
 
             // Inicia o Servidor
             Remote remote = UnicastRemoteObject.exportObject(obj, 0);
@@ -33,5 +32,4 @@ public class Servidor {
         }
 
     }
-
 }
