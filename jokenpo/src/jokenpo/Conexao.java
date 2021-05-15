@@ -11,7 +11,7 @@ public interface Conexao extends Remote {
     
     public void Jogar(int itemEscolhido, int tipoJogador) throws RemoteException;
 
-    public String DeterminarVencedorEReiniciarJogo() throws RemoteException;
+    public String DeterminarVencedorEReiniciarJogo(boolean finalizarJogo) throws RemoteException;
     
     
 }

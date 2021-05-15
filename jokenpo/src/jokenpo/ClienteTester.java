@@ -41,7 +41,7 @@ public class ClienteTester {
 
                 conexao.Jogar(jogada2, 2);
 
-                System.out.println("\n" + conexao.DeterminarVencedorEReiniciarJogo() + "\n");
+                System.out.println("\n" + conexao.DeterminarVencedorEReiniciarJogo(false) + "\n");
                 // JxJ -------------------------------------------------------------
             } else {
                 // JxCPU -----------------------------------------------------------
@@ -56,7 +56,8 @@ public class ClienteTester {
 
                 conexao.Jogar(jogada, 1);
 
-                System.out.println("\n" + conexao.DeterminarVencedorEReiniciarJogo() + "\n");
+                System.out.println("\n" + conexao.DeterminarVencedorEReiniciarJogo(true) + "\n");
+                System.out.println("\n" + conexao.DeterminarVencedorEReiniciarJogo(false) + "\n");
                 // JxCPU -----------------------------------------------------------
             }
 

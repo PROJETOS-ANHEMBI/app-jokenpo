@@ -6,13 +6,14 @@ import java.util.Random;
 
 public class Partida implements Conexao {
 
+    // Construtor
     public Partida() throws RemoteException {
         super();
     }
 
     private String[] jogadores = new String[2]; // Grava o nome dos Jogadores
     private int[] jogo = new int[2]; // Grava as informações do Jogo, para computar o vencedor
-    private boolean CPU; // Flag que informa se a CPU jogará
+    private boolean CPU; // Flag que informa se a CPU jogará ou não
 
     @Override // Realiza o Cadastro dos Jogadores, para um jogo JxJ
     public void CadastrarJogadores(String nome, int tipoJogador) {
@@ -29,49 +30,59 @@ public class Partida implements Conexao {
         CPU = true;
     }
 
-    @Override
+    @Override // Método acessivel pela aplicação, para salvar a jogada dos Jogadores
     public void Jogar(int itemEscolhido, int tipoJogador) {
 
+        // Este IF verifica se a CPU está jogando (CPU = "true" significa que é um jogo JxCPU)
         if (CPU) {
+            // Salva a Jogada enviada pelo Jogador1, e realiza a jogada da CPU
             SalvarJogadaDoJogador(itemEscolhido, 1);
             SalvarJogadaDaCPU();
         } else {
+            // Salva a jogada do Jogador1 e Jogador2, conforme parametros recebidos
             SalvarJogadaDoJogador(itemEscolhido, tipoJogador);
         }
 
     }
 
-    // Salva as jogadas dos jogadores, no controle (variavel "jogo"
+    // Salva as jogadas dos Jogadores, no controle "jogo"
     private void SalvarJogadaDoJogador(int itemEscolhido, int tipoJogador) {
+        // Salva o item escolhido (itemEscolhido) pelo jogador (tipoJogador - Jogador1 ou Jogador2)
         jogo[tipoJogador - 1] = itemEscolhido;
     }
 
-    // Salva as jogadas da CPU, no controle (variavel "jogo"
+    // Salva as jogadas da CPU, no controle "jogo"
     private void SalvarJogadaDaCPU() {
+        // Salva a jogada da CPU (feita de forma randomica)
         Random r = new Random();
         jogo[1] = r.nextInt(3) + 1;
     }
 
-    @Override // Retorna a mensagem de Vitória ou Empate
-    public String DeterminarVencedorEReiniciarJogo() {
+    @Override // Retorna a mensagem de Vitória ou Empate (o parametro = "true", finaliza o jogo)
+    public String DeterminarVencedorEReiniciarJogo(boolean finalizarJogo) {
 
-        if (jogo.length == 2) {
-            // Retorna o vencedor (Jogador 1 ou Jogador2), caso todas as jogadas tiverem sido realizadas
+        // Retorna o vencedor (Jogador 1 ou Jogador2), caso todas as jogadas tiverem sido realizadas
+        // "jogo[0] != 0 && jogo[1] != 0" - Significa que os 02 Jogadores realizaram suas jogadas
+        if (jogo[0] != 0 && jogo[1] != 0) {
 
-            // Reinicia o controle dos jogadores
+            // Utiliza um novo controle para os jogadores, caso o jogo seja encerrado
             String[] bckJogadores = new String[2];
             bckJogadores[0] = jogadores[0];
             bckJogadores[1] = jogadores[1];
-            jogadores = new String[2];
 
-            // Reinicia o controle do jogo
+            // Reinicia o controle do jogo para a próxima partida
             int[] bckJogo = new int[2];
             bckJogo[0] = jogo[0];
             bckJogo[1] = jogo[1];
             jogo = new int[2];
 
-            // Reinicia o controle da CPU como Jogadora
-            CPU = false;
+            // Se essa for a última partida
+            if (finalizarJogo) {
+                // Reinicia o controle dos jogadores
+                jogadores = new String[2];
+                // Reinicia o controle da CPU como Jogadora
+                CPU = false;
+            }
 
             // Determina o Vencedor (Jogador1 ou Jogador2)
             int vencedor;
@@ -82,14 +93,29 @@ public class Partida implements Conexao {
             } else if (bckJogo[1] == 1 && bckJogo[0] == 3 || bckJogo[1] == 3 && bckJogo[0] == 2 || bckJogo[1] == 2 && bckJogo[0] == 1) {
                 vencedor = 2;
             } else {
-                return ("Empate:\n"
+
+                String resultado = ("Empate:\n"
                         + "| O Jogador 1 (" + bckJogadores[0] + ") escolheu " + BuscarJogada(bckJogo, 1)
                         + " | O Jogador 2 (" + bckJogadores[1] + ") escolheu " + BuscarJogada(bckJogo, 2) + " |");
+
+                if (finalizarJogo) {
+                    System.out.println("\n> O Jogo entre " + bckJogadores[0] + " e " + bckJogadores[1] + " foi finalizado.\n\n");
+                }
+
+                return resultado;
             }
 
-            return ("Vencedor: Jogador " + vencedor + " (" + bckJogadores[vencedor - 1] + ")\n"
+            String resultado = ("Vencedor: Jogador " + vencedor + " (" + bckJogadores[vencedor - 1] + ")\n"
                     + "| O Jogador 1 (" + bckJogadores[0] + ") escolheu " + BuscarJogada(bckJogo, 1)
                     + " | O Jogador 2 (" + bckJogadores[1] + ") escolheu " + BuscarJogada(bckJogo, 2) + " |");
+
+            System.out.println(resultado);
+
+            if (finalizarJogo) {
+                System.out.println("\n> O Jogo entre " + bckJogadores[0] + " e " + bckJogadores[1] + " foi finalizado.\n\n");
+            }
+
+            return resultado;
 
         } else {
             // Retorna um valor nulo, caso algum jogador ainda precise realizar uma jogada
@@ -100,12 +126,14 @@ public class Partida implements Conexao {
 
     // Informa qual item cada jogador escolheu (Pedra, Papel ou Tesoura)
     private String BuscarJogada(int[] bckJogo, int tipoJogador) {
-        if (bckJogo[tipoJogador - 1] == 1) {
-            return "Pedra";
-        } else if (bckJogo[tipoJogador - 1] == 2) {
-            return "Papel";
-        } else {
-            return "Tesoura";
+        // | 1 = PEDRA | 2 = PAPEL | 3 = TESOURA |
+        switch (bckJogo[tipoJogador - 1]) {
+            case 1:
+                return "Pedra";
+            case 2:
+                return "Papel";
+            default:
+                return "Tesoura";
         }
     }
 
