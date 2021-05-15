@@ -7,7 +7,7 @@ public interface Conexao extends Remote {
 
     public int CadastrarJogadores(String nome) throws RemoteException;
 
-    public void CadastrarJogador(String nome) throws RemoteException;
+    public int CadastrarJogador(String nome) throws RemoteException;
 
     public void Jogar(int itemEscolhido, int tipoJogador) throws RemoteException;
 

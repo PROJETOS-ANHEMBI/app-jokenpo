@@ -87,11 +87,16 @@ public class AppJokenpo extends javax.swing.JFrame {
 
                         System.out.print("Cadastro do Jogador: ");
                         String jogador = sc.next();
-                        conexao.CadastrarJogador(jogador);
 
-                        System.out.print("Escolha: '1' para Pedra ou '2' para Papel ou '3' para Tesoura: ");
-                        int jogada = sc2.nextInt();
-                        conexao.Jogar(jogada, 1);
+                        int tipoJogador = conexao.CadastrarJogador(jogador);
+                        if (tipoJogador != 0) {
+                            System.out.print("Escolha: '1' para Pedra ou '2' para Papel ou '3' para Tesoura: ");
+                            int jogada = sc2.nextInt();
+                            conexao.Jogar(jogada, 1);
+                        } else {
+                            System.out.println("O Servidor está ocupado no momento!");
+                            System.exit(0);
+                        }
 
                         // Timer que verifica o vencedor a cada 05 segundos
                         timer = new Timer(3000, VerificarVencedor);
@@ -107,9 +112,15 @@ public class AppJokenpo extends javax.swing.JFrame {
                         System.out.print("PorFavor informe seu nome: ");
                         String jogador = sc.next();
 
-                        System.out.print("Escolha: '1' para Pedra ou '2' para Papel ou '3' para Tesoura: ");
-                        int jogada = sc2.nextInt();
-                        conexao.Jogar(jogada, conexao.CadastrarJogadores(jogador));
+                        int tipoJogador = conexao.CadastrarJogadores(jogador);
+                        if (tipoJogador != 0) {
+                            System.out.print("Escolha: '1' para Pedra ou '2' para Papel ou '3' para Tesoura: ");
+                            int jogada = sc2.nextInt();
+                            conexao.Jogar(jogada, tipoJogador);
+                        } else {
+                            System.out.println("O Servidor está ocupado no momento!");
+                            System.exit(0);
+                        }
 
                         // Timer que verifica o vencedor a cada 05 segundos
                         timer = new Timer(3000, VerificarVencedor);
@@ -134,12 +145,13 @@ public class AppJokenpo extends javax.swing.JFrame {
 
                 segundosDeEspera += 3;
 
-                // Exemplo de Finalização de uma Partida em Execução ----------- /*
+                /*
+                //Exemplo de Finalização de uma Partida em Execução ------------
                 if (segundosDeEspera == 9) {
                     conexao.EncerrarPartida();
                 }
-                // Exemplo de Finalização de uma Partida em Execução ----------- */
-
+                //Exemplo de Finalização de uma Partida em Execução ------------
+                 */
                 String vencedor = conexao.DeterminarVencedor();
                 if (vencedor != null) {
                     if (vencedor.equals("Partida Finalizada")) {

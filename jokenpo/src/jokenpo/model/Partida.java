@@ -22,10 +22,10 @@ public class Partida implements Conexao {
         CPU = false;
         partidaEncerrada = false;
 
-        if (jogadores[0] == null || jogadores[0] == "") {
+        if (jogadores[0] == null) {
             jogadores[0] = nome;
             return 1;
-        } else if (jogadores[1] == null || jogadores[0] == "") {
+        } else if (jogadores[1] == null) {
             jogadores[1] = nome;
             return 2;
         } else {
@@ -35,12 +35,18 @@ public class Partida implements Conexao {
     }
 
     @Override // Método acessível ao Cliente
-    public void CadastrarJogador(String nome) {
+    public int CadastrarJogador(String nome) {
         // Salva o nome do Jogador, e salva a informação que a CPU também jogará
-        partidaEncerrada = false;
-        jogadores[0] = nome;
-        jogadores[1] = "CPU";
-        CPU = true;
+
+        if (jogadores[0] == null && jogadores[1] == null) {
+            partidaEncerrada = false;
+            jogadores[0] = nome;
+            jogadores[1] = "CPU";
+            CPU = true;
+            return 1;
+        } else {
+            return 0;
+        }
     }
 
     @Override // Método acessível ao Cliente
