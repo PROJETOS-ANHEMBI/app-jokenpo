@@ -16,10 +16,20 @@ public class Partida implements Conexao {
     private boolean CPU; // Flag que informa se a CPU jogará ou não
 
     @Override // Realiza o Cadastro dos Jogadores, para um jogo JxJ
-    public void CadastrarJogadores(String nome, int tipoJogador) {
+    public boolean CadastrarJogadores(String nome) {
         // Salva o nome dos Jogadores, com base na ordem de cadastro (Jogador1 e Jogador2)
-        jogadores[tipoJogador - 1] = nome;
         CPU = false;
+        
+        if(jogadores[0] == null){
+            jogadores[0] = nome;
+            return true;
+        } else if(jogadores[1] == null){
+            jogadores[1] = nome;
+            return true;
+        } else{
+            return false;
+        }
+        
     }
 
     @Override // Realiza o Cadastro de um Jogador, para um jogo JxCPU
@@ -99,7 +109,7 @@ public class Partida implements Conexao {
                         + " | O Jogador 2 (" + bckJogadores[1] + ") escolheu " + BuscarJogada(bckJogo, 2) + " |");
 
                 if (finalizarJogo) {
-                    System.out.println("\n> O Jogo entre " + bckJogadores[0] + " e " + bckJogadores[1] + " foi finalizado.\n\n");
+                    System.out.println("> O Jogo entre " + bckJogadores[0] + " e " + bckJogadores[1] + " foi finalizado.\n\n");
                 }
 
                 return resultado;
@@ -112,7 +122,7 @@ public class Partida implements Conexao {
             System.out.println(resultado);
 
             if (finalizarJogo) {
-                System.out.println("\n> O Jogo entre " + bckJogadores[0] + " e " + bckJogadores[1] + " foi finalizado.\n\n");
+                System.out.println("> O Jogo entre " + bckJogadores[0] + " e " + bckJogadores[1] + " foi finalizado.\n\n");
             }
 
             return resultado;
