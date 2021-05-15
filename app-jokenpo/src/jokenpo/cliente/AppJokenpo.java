@@ -73,38 +73,14 @@ public class AppJokenpo extends javax.swing.JFrame {
                     Registry registry = LocateRegistry.getRegistry("localhost", 1099);
                     // Cria a conexao com o Servidor
                     conexao = (Conexao) registry.lookup("jokenpo");
-                    
+
                     Scanner sc = new Scanner(System.in);
                     Scanner sc2 = new Scanner(System.in);
 
-                    System.out.println("Digite: \n> '1' para JxJ \n> '2' para JxCPU \n> '3' para Teste real com 02 Jogadores");
+                    System.out.println("Digite: \n> '1' para JxCPU \n> '2' para Teste real com 02 Jogadores");
                     int escolha = sc2.nextInt();
 
                     if (escolha == 1) {
-                        // JxJ ---------------------------------------------------------
-                        System.err.println("\nExemplo de Jogo JxJ");
-
-                        System.out.print("Cadastro do Jogador1: ");
-                        String jogador1 = sc.next();
-                        conexao.CadastrarJogadores(jogador1);
-
-                        System.out.print("Cadastro do Jogador2: ");
-                        String jogador2 = sc.next();
-                        conexao.CadastrarJogadores(jogador2);
-
-                        System.out.print("\nVez do Jogador1: ");
-                        int jogada1 = sc2.nextInt();
-
-                        conexao.Jogar(jogada1, 1);
-
-                        System.out.print("Vez do Jogador2: ");
-                        int jogada2 = sc2.nextInt();
-
-                        conexao.Jogar(jogada2, 2);
-
-                        System.out.println("\n" + conexao.DeterminarVencedorEReiniciarJogo(false) + "\n");
-                        // JxJ ---------------------------------------------------------
-                    } else if (escolha == 2) {
                         // JxCPU -------------------------------------------------------
                         System.err.println("\nExemplo de Jogo JxCPU");
 
@@ -112,33 +88,35 @@ public class AppJokenpo extends javax.swing.JFrame {
                         String jogador = sc.next();
                         conexao.CadastrarJogador(jogador);
 
-                        System.out.print("\nVez do Jogador: ");
+                        System.out.print("Escolha: '1' para Pedra ou '2' para Papel ou '3' para Tesoura: ");
                         int jogada = sc2.nextInt();
-
                         conexao.Jogar(jogada, 1);
 
-                        System.out.println("\n" + conexao.DeterminarVencedorEReiniciarJogo(true) + "\n");
-                        System.out.println(conexao.DeterminarVencedorEReiniciarJogo(false));
+                        // Timer que verifica o vencedor a cada 05 segundos
+                        timer = new Timer(3000, VerificarVencedor);
+                        timer.setRepeats(true);
+                        timer.start();
+                        // Timer que verifica o vencedor a cada 05 segundos
+                        
                         // JxCPU -------------------------------------------------------
-                    } else if (escolha == 3) {
+                    } else if (escolha == 2) {
                         // Teste real com 02 Jogadores ---------------------------------
                         System.err.println("\nExemplo de Teste real com 02 Jogadores");
 
                         System.out.print("PorFavor informe seu nome: ");
                         String jogador = sc.next();
-                        conexao.CadastrarJogadores(jogador);
 
-                        System.out.print("\nEscolha: '1'-Pedra ou '2'-Papel ou '3'-Tesoura: ");
+                        System.out.print("Escolha: '1' para Pedra ou '2' para Papel ou '3' para Tesoura: ");
                         int jogada = sc2.nextInt();
-
-                        conexao.Jogar(jogada, 1);
+                        conexao.Jogar(jogada, conexao.CadastrarJogadores(jogador));
 
                         // Timer que verifica o vencedor a cada 05 segundos
-                        timer = new Timer(1000, VerificarVencedor);
+                        timer = new Timer(3000, VerificarVencedor);
                         timer.setRepeats(true);
                         timer.start();
                         // Timer que verifica o vencedor a cada 05 segundos
-                        // JxCPU -------------------------------------------------------
+                        
+                        // Teste real com 02 Jogadores -------------------------------------------------------
                     }
 
                 } catch (Exception e) {
@@ -152,11 +130,14 @@ public class AppJokenpo extends javax.swing.JFrame {
     static ActionListener VerificarVencedor = new ActionListener() {
         public void actionPerformed(ActionEvent evt) {
             try {
-                if (conexao.DeterminarVencedorEReiniciarJogo(true) != null) {
-                    System.out.println("\n" + conexao.DeterminarVencedorEReiniciarJogo(true) + "\n");
+                String vencedor = conexao.DeterminarVencedor();
+                if (vencedor != null) {
+                    System.out.println("\n" + vencedor + "\n");
                     timer.stop();
+                } else if (vencedor == "Jogo Finalizado.") {
+                    System.out.println(vencedor);
                 } else {
-                    System.out.println("Aguardando o outro Jogador escolher um item ...");
+                    System.out.println("Aguardando o outro Jogador ...");
                 }
             } catch (RemoteException e) {
                 System.err.println("Erro: " + e);

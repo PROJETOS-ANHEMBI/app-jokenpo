@@ -1,8 +1,6 @@
 package jokenpo.model;
 
-import jokenpo.model.Conexao;
 import java.rmi.RemoteException;
-import java.util.List;
 import java.util.Random;
 
 public class Partida implements Conexao {
@@ -15,22 +13,23 @@ public class Partida implements Conexao {
     private String[] jogadores = new String[2]; // Grava o nome dos Jogadores
     private int[] jogo = new int[2]; // Grava as informações do Jogo, para computar o vencedor
     private boolean CPU; // Flag que informa se a CPU jogará ou não
+    private int vencedorDeterminado; // contador que informa se os 02 jogadores foram informados do resultado da partida
 
     @Override // Realiza o Cadastro dos Jogadores, para um jogo JxJ
-    public boolean CadastrarJogadores(String nome) {
+    public int CadastrarJogadores(String nome) {
         // Salva o nome dos Jogadores, com base na ordem de cadastro (Jogador1 e Jogador2)
         CPU = false;
-        
-        if(jogadores[0] == null){
+
+        if (jogadores[0] == null || jogadores[0] == "") {
             jogadores[0] = nome;
-            return true;
-        } else if(jogadores[1] == null){
+            return 1;
+        } else if (jogadores[1] == null || jogadores[0] == "") {
             jogadores[1] = nome;
-            return true;
-        } else{
-            return false;
+            return 2;
+        } else {
+            return 0;
         }
-        
+
     }
 
     @Override // Realiza o Cadastro de um Jogador, para um jogo JxCPU
@@ -70,29 +69,21 @@ public class Partida implements Conexao {
     }
 
     @Override // Retorna a mensagem de Vitória ou Empate (o parametro = "true", finaliza o jogo)
-    public String DeterminarVencedorEReiniciarJogo(boolean finalizarJogo) {
+    public String DeterminarVencedor() {
 
         // Retorna o vencedor (Jogador 1 ou Jogador2), caso todas as jogadas tiverem sido realizadas
         // "jogo[0] != 0 && jogo[1] != 0" - Significa que os 02 Jogadores realizaram suas jogadas
         if (jogo[0] != 0 && jogo[1] != 0) {
 
-            // Utiliza um novo controle para os jogadores, caso o jogo seja encerrado
-            String[] bckJogadores = new String[2];
-            bckJogadores[0] = jogadores[0];
-            bckJogadores[1] = jogadores[1];
+            // Controle do jogo, para informar ao Jogador2, o resultado da partida
+            int bckJogo[] = jogo;
 
-            // Reinicia o controle do jogo para a próxima partida
-            int[] bckJogo = new int[2];
-            bckJogo[0] = jogo[0];
-            bckJogo[1] = jogo[1];
-            jogo = new int[2];
-
-            // Se essa for a última partida
-            if (finalizarJogo) {
-                // Reinicia o controle dos jogadores
-                jogadores = new String[2];
-                // Reinicia o controle da CPU como Jogadora
-                CPU = false;
+            // Verifica se os 02 jogadores já visualizaram o resultado
+            vencedorDeterminado++;
+            if ((!CPU && vencedorDeterminado == 2) || (CPU && vencedorDeterminado == 1)) {
+                // Reinicia o controle do jogo para a próxima partida
+                jogo = new int[2];
+                vencedorDeterminado = 0;
             }
 
             // Determina o Vencedor (Jogador1 ou Jogador2)
@@ -104,29 +95,14 @@ public class Partida implements Conexao {
             } else if (bckJogo[1] == 1 && bckJogo[0] == 3 || bckJogo[1] == 3 && bckJogo[0] == 2 || bckJogo[1] == 2 && bckJogo[0] == 1) {
                 vencedor = 2;
             } else {
-
-                String resultado = ("Empate:\n"
-                        + "| O Jogador 1 (" + bckJogadores[0] + ") escolheu " + BuscarJogada(bckJogo, 1)
-                        + " | O Jogador 2 (" + bckJogadores[1] + ") escolheu " + BuscarJogada(bckJogo, 2) + " |");
-
-                if (finalizarJogo) {
-                    System.out.println("> O Jogo entre " + bckJogadores[0] + " e " + bckJogadores[1] + " foi finalizado.\n\n");
-                }
-
-                return resultado;
+                return ("Empate:\n"
+                        + "| O Jogador 1 (" + jogadores[0] + ") escolheu " + BuscarJogada(bckJogo, 1)
+                        + " | O Jogador 2 (" + jogadores[1] + ") escolheu " + BuscarJogada(bckJogo, 2) + " |");
             }
 
-            String resultado = ("Vencedor: Jogador " + vencedor + " (" + bckJogadores[vencedor - 1] + ")\n"
-                    + "| O Jogador 1 (" + bckJogadores[0] + ") escolheu " + BuscarJogada(bckJogo, 1)
-                    + " | O Jogador 2 (" + bckJogadores[1] + ") escolheu " + BuscarJogada(bckJogo, 2) + " |");
-
-            System.out.println(resultado);
-
-            if (finalizarJogo) {
-                System.out.println("> O Jogo entre " + bckJogadores[0] + " e " + bckJogadores[1] + " foi finalizado.\n\n");
-            }
-
-            return resultado;
+            return ("Vencedor: Jogador " + vencedor + " - " + jogadores[vencedor - 1] + "\n"
+                    + "| " + jogadores[0] + " escolheu " + BuscarJogada(bckJogo, 1)
+                    + " | " + jogadores[1] + " escolheu " + BuscarJogada(bckJogo, 2) + " |");
 
         } else {
             // Retorna um valor nulo, caso algum jogador ainda precise realizar uma jogada
@@ -148,4 +124,8 @@ public class Partida implements Conexao {
         }
     }
 
+    public void SairDaPartida() {
+
+    }
+    
 }
