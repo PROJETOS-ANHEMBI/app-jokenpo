@@ -103,19 +103,32 @@ public class Partida implements Conexao {
                 } else if (bckJogo[1] == 1 && bckJogo[0] == 3 || bckJogo[1] == 3 && bckJogo[0] == 2 || bckJogo[1] == 2 && bckJogo[0] == 1) {
                     vencedor = 2;
                 } else {
+
+                    if (vencedorDeterminado == 0) {
+                        System.out.println("Houve um Empate!\n"
+                                + "> " + jogadores[0] + " escolheu " + BuscarJogada(bckJogo, 1)
+                                + " e " + jogadores[1] + " escolheu " + BuscarJogada(bckJogo, 2) + "\n");
+                    }
+
                     if (!BuscarJogada(bckJogo, 1).equals("Partida Finalizada") && !BuscarJogada(bckJogo, 2).equals("Partida Finalizada")) {
-                        return ("Empate:\n"
-                                + "| O Jogador 1 (" + jogadores[0] + ") escolheu " + BuscarJogada(bckJogo, 1)
-                                + " | O Jogador 2 (" + jogadores[1] + ") escolheu " + BuscarJogada(bckJogo, 2) + " |");
+                        return ("Houve um Empate!\n"
+                                + "> " + jogadores[0] + " escolheu " + BuscarJogada(bckJogo, 1)
+                                + " e " + jogadores[1] + " escolheu " + BuscarJogada(bckJogo, 2));
                     } else {
                         return "Partida Finalizada";
                     }
                 }
 
+                if (vencedorDeterminado == 0) {
+                    System.out.println("Vencedor: " + jogadores[vencedor - 1] + "\n"
+                            + "> " + jogadores[0] + " escolheu " + BuscarJogada(bckJogo, 1)
+                            + " e " + jogadores[1] + " escolheu " + BuscarJogada(bckJogo, 2) + "\n");
+                }
+
                 if (!BuscarJogada(bckJogo, 1).equals("Partida Finalizada") && !BuscarJogada(bckJogo, 2).equals("Partida Finalizada")) {
-                    return ("Vencedor: Jogador " + vencedor + " - " + jogadores[vencedor - 1] + "\n"
-                            + "| " + jogadores[0] + " escolheu " + BuscarJogada(bckJogo, 1)
-                            + " | " + jogadores[1] + " escolheu " + BuscarJogada(bckJogo, 2) + " |");
+                    return ("Vencedor: " + jogadores[vencedor - 1] + "\n"
+                            + "> " + jogadores[0] + " escolheu " + BuscarJogada(bckJogo, 1)
+                            + " e " + jogadores[1] + " escolheu " + BuscarJogada(bckJogo, 2));
                 } else {
                     return "Partida Finalizada";
                 }
