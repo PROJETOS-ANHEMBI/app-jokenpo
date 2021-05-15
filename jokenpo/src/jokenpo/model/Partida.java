@@ -1,5 +1,6 @@
-package jokenpo;
+package jokenpo.model;
 
+import jokenpo.model.Conexao;
 import java.rmi.RemoteException;
 import java.util.List;
 import java.util.Random;

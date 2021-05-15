@@ -1,5 +1,6 @@
-package jokenpo;
+package jokenpo.servidor;
 
+import jokenpo.model.Partida;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -11,12 +12,12 @@ import java.rmi.registry.Registry;
 import java.rmi.server.UnicastRemoteObject;
 
 public class Servidor {
-    public static void main(String[] args) {
 
+    public static void main(String[] args) {
+        Registry registro = null;
         try {
 
             // Inicializa objetos que serão utilizados para iniciar o servidor
-            Registry registro = null;
             Partida obj = new Partida();
 
             // Inicia o Servidor
