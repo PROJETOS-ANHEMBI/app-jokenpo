@@ -13,6 +13,6 @@ public interface Conexao extends Remote {
 
     public String DeterminarVencedor() throws RemoteException;
     
-    public void SairDaPartida() throws RemoteException;
+    public void EncerrarPartida() throws RemoteException;
 
 }

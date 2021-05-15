@@ -13,6 +13,7 @@ public class AppJokenpo extends javax.swing.JFrame {
 
     static Conexao conexao;
     static Timer timer;
+    static int segundosDeEspera;
 
     public AppJokenpo() {
         initComponents();
@@ -97,7 +98,7 @@ public class AppJokenpo extends javax.swing.JFrame {
                         timer.setRepeats(true);
                         timer.start();
                         // Timer que verifica o vencedor a cada 05 segundos
-                        
+
                         // JxCPU -------------------------------------------------------
                     } else if (escolha == 2) {
                         // Teste real com 02 Jogadores ---------------------------------
@@ -115,7 +116,7 @@ public class AppJokenpo extends javax.swing.JFrame {
                         timer.setRepeats(true);
                         timer.start();
                         // Timer que verifica o vencedor a cada 05 segundos
-                        
+
                         // Teste real com 02 Jogadores -------------------------------------------------------
                     }
 
@@ -130,12 +131,24 @@ public class AppJokenpo extends javax.swing.JFrame {
     static ActionListener VerificarVencedor = new ActionListener() {
         public void actionPerformed(ActionEvent evt) {
             try {
+
+                segundosDeEspera += 3;
+
+                // Exemplo de Finalização de uma Partida em Execução ----------- /*
+                if (segundosDeEspera == 9) {
+                    conexao.EncerrarPartida();
+                }
+                // Exemplo de Finalização de uma Partida em Execução ----------- */
+
                 String vencedor = conexao.DeterminarVencedor();
                 if (vencedor != null) {
-                    System.out.println("\n" + vencedor + "\n");
-                    timer.stop();
-                } else if (vencedor == "Jogo Finalizado.") {
-                    System.out.println(vencedor);
+                    if (vencedor.equals("Partida Finalizada")) {
+                        System.out.println(vencedor);
+                        timer.stop();
+                    } else {
+                        System.out.println("\n" + vencedor + "\n");
+                        timer.stop();
+                    }
                 } else {
                     System.out.println("Aguardando o outro Jogador ...");
                 }
