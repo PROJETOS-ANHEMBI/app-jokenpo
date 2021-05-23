@@ -7,7 +7,6 @@ import java.rmi.registry.Registry;
 import java.rmi.server.UnicastRemoteObject;
 
 public class Servidor {
-
     public static void main(String[] args) {
         Registry registro = null;
         try {
@@ -20,6 +19,5 @@ public class Servidor {
         } catch (Exception e) {
             System.err.println("--- Erro na Inicialização do Jokenpô: " + e.getMessage());
         }
-
     }
 }

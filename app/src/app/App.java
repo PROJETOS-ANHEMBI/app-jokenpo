@@ -1,24 +1,33 @@
 package app;
 
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.rmi.RemoteException;
 import java.rmi.registry.LocateRegistry;
 import java.rmi.registry.Registry;
 import java.util.Scanner;
-import javax.swing.Timer;
+import java.util.TimerTask;
+import java.util.Timer;
 import model.Conexao;
 
 public class App {
 
+    // Variaveis para controle das partidas
     static Conexao conexao;
     static Timer timer;
+    static String continuar = "s";
+    static boolean vencedorVerificado;
     static int segundosDeEspera;
+
+    // Variaveis para controle do jogador   
+    static String jogador;
     static int tipoJogador;
     static int vitorias, derrotas, empates;
-    static String jogador;
 
-    public static void main(String args[]) {
+    // Criando Scanners necessários
+    static Scanner sc = new Scanner(System.in);
+    static Scanner sc2 = new Scanner(System.in);
+    static Scanner sc3 = new Scanner(System.in);
+
+    public static void main(String args[]) throws RemoteException {
 
         try {
 
@@ -26,11 +35,9 @@ public class App {
             Registry registry = LocateRegistry.getRegistry("localhost", 1099);
             conexao = (Conexao) registry.lookup("jokenpo");
 
-            // Criando Scanners necessários
-            Scanner sc = new Scanner(System.in);
-            Scanner sc2 = new Scanner(System.in);
-            Scanner sc3 = new Scanner(System.in);
-            String continuar = "s";
+            // Inicializando variavés com valores iniciais
+            continuar = "s";
+            vencedorVerificado = true;
 
             // Cadastro de Jogador
             System.out.println("--- Cadastro do Jogador:");
@@ -53,9 +60,10 @@ public class App {
             // Execução do Jogo
             while (continuar.toLowerCase().equals(("s"))) {
 
-                if (escolha == 1) {
+                if (escolha == 1 && vencedorVerificado) {
                     // JOGADOR x CPU -------------------------------------------
-                    System.err.println("\n--- JOGADOR x CPU");
+                    System.out.println("\n--- JOGADOR x CPU");
+                    vencedorVerificado = false;
 
                     if (tipoJogador != 0) {
                         System.out.print("Escolha: '1' para Pedra ou '2' para Papel ou '3' para Tesoura: ");
@@ -66,28 +74,15 @@ public class App {
                         System.exit(0);
                     }
 
-                    String[] vencedor = conexao.DeterminarVencedor();
-                    if (vencedor[1] != null) {
-                        System.out.println(vencedor[0] + "\nO Vencedor foi: " + vencedor[1]);
-                        if (vencedor[2].equals(String.valueOf(tipoJogador))) {
-                            vitorias++;
-                        } else {
-                            derrotas++;
-                        }
-                    } else {
-                        empates++;
-                        System.out.println(vencedor[0]);
-                    }
+                    // Timer que verifica o vencedor a cada 03 segundos
+                    timer = new Timer();
+                    timer.schedule(new TaskVerificarVencedor(), 0, 3000);
+                    // Timer que verifica o vencedor a cada 03 segundost
 
-                    // Timer que verifica o vencedor a cada 05 segundos
-                    timer = new Timer(3000, VerificarVencedor);
-                    timer.setRepeats(true);
-                    timer.start();
-                    // Timer que verifica o vencedor a cada 05 segundos
-
-                } else if (escolha == 2) {
+                } else if (escolha == 2 && vencedorVerificado) {
                     // JOGADOR x JOGADOR ---------------------------------------
-                    System.err.println("\n--- JOGADOR x JOGADOR");
+                    System.out.println("\n--- JOGADOR x JOGADOR");
+                    vencedorVerificado = false;
 
                     if (tipoJogador != 0) {
                         System.out.print("Escolha: '1' para Pedra ou '2' para Papel ou '3' para Tesoura: ");
@@ -98,64 +93,75 @@ public class App {
                         System.exit(0);
                     }
 
-                    String[] vencedor = conexao.DeterminarVencedor();
-                    if (vencedor[1] != null) {
-                        System.out.println(vencedor[0] + "\nO Vencedor foi: " + vencedor[1]);
-                        if (vencedor[2].equals(tipoJogador)) {
-                            vitorias++;
-                        } else {
-                            derrotas++;
-                        }
-                    } else {
-                        System.out.println(vencedor[0]);
-                    }
-
-                    // Timer que verifica o vencedor a cada 05 segundos
-                    timer = new Timer(3000, VerificarVencedor);
-                    timer.setRepeats(true);
-                    timer.start();
-                    // Timer que verifica o vencedor a cada 05 segundos
+                    // Timer que verifica o vencedor a cada 03 segundos
+                    timer = new Timer();
+                    timer.schedule(new TaskVerificarVencedor(), 0, 3000);
+                    // Timer que verifica o vencedor a cada 03 segundost
 
                 }
-                System.out.println("\n--- PLACAR: |" + vitorias + " Vitorias | " + derrotas + " Derrotas | " + empates + " Empates |");
-                System.out.println("\nDeseja continuar jogando " + jogador + "? Digite 's' para continuar ou digite qualquer coisa para sair.");
-                continuar = sc3.nextLine();
 
             }
+
+            conexao.EncerrarPartida();
+
         } catch (Exception e) {
+            conexao.EncerrarPartida();
             System.out.println("Erro: " + e.getMessage());
         }
 
     }
 
-    static ActionListener VerificarVencedor = new ActionListener() {
-        public void actionPerformed(ActionEvent evt) {
-            try {
-
-                segundosDeEspera += 3;
-
-                /*
-                //Exemplo de Finalização de uma Partida em Execução ------------
-                if (segundosDeEspera == 9) {
-                    conexao.EncerrarPartida();
+    // Metodo para verificar o vencedor em partidas JxJ ou JxCPU
+    static void VerificarVencedor(String[] vencedor) {
+        try {
+            if (vencedor[1] != null) {
+                System.out.println(vencedor[0] + "\nO Vencedor foi: " + vencedor[1]);
+                if (vencedor[2].equals(String.valueOf(tipoJogador))) {
+                    vitorias++;
+                } else {
+                    derrotas++;
                 }
-                //Exemplo de Finalização de uma Partida em Execução ------------
-                 */
+            } else {
+                empates++;
+                System.out.println(vencedor[0]);
+            }
+
+            System.out.println("\n--- PLACAR: | " + vitorias + " Vitorias | " + derrotas + " Derrotas | " + empates + " Empates |");
+            System.out.println("\nDeseja continuar jogando " + jogador + "? Digite 's' para continuar ou digite qualquer coisa para sair.");
+            Scanner scanner = new Scanner(System.in);
+            continuar = scanner.nextLine();
+            vencedorVerificado = true;
+            timer.cancel();
+
+        } catch (Exception e) {
+            System.err.println("Erro: " + e);
+        }
+    }
+
+    // Classe utilizada para verificar o vencedor a cada 03 segundos com timer
+    static class TaskVerificarVencedor extends TimerTask {
+
+        public void run() {
+            try {
+                segundosDeEspera += 3;
+                if (segundosDeEspera == 120) {
+                    conexao.EncerrarPartida();
+                    System.err.println("A partida foi finalizada devido demora de 02 minutos do outro Jogador!");
+                    conexao.EncerrarPartida();
+                    System.exit(0);
+                }
+
                 String[] vencedor = conexao.DeterminarVencedor();
                 if (vencedor != null) {
-                    if (vencedor.equals("Partida Finalizada")) {
-                        System.out.println(vencedor);
-                        timer.stop();
-                    } else {
-                        System.out.println("\n" + vencedor + "\n");
-                        timer.stop();
-                    }
+                    VerificarVencedor(vencedor);
                 } else {
-                    System.out.println("Aguardando o outro Jogador ...");
+                    System.out.println("Aguardando o outro jogador ...");
                 }
+
             } catch (RemoteException e) {
                 System.err.println("Erro: " + e);
             }
         }
-    };
+    }
+
 }
