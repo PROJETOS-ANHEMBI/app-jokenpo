@@ -1,4 +1,4 @@
-package jokenpo.model;
+package model;
 
 import java.rmi.RemoteException;
 import java.util.Random;

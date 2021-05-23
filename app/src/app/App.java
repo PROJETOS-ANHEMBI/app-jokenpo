@@ -1,9 +1,4 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
-package jokenpo.cliente;
+package app;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -12,13 +7,9 @@ import java.rmi.registry.LocateRegistry;
 import java.rmi.registry.Registry;
 import java.util.Scanner;
 import javax.swing.Timer;
-import jokenpo.model.Conexao;
+import model.Conexao;
 
-/**
- *
- * @author groov
- */
-public class ConsoleJokenpo {
+public class App {
 
     static Conexao conexao;
     static Timer timer;

@@ -1,6 +1,6 @@
-package jokenpo.servidor;
+package servidor;
 
-import jokenpo.model.Partida;
+import model.Partida;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
