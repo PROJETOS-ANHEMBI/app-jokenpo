@@ -22,86 +22,104 @@ public class App {
 
         try {
 
-            // Pegando o registro 
+            // Inicia o servidor
             Registry registry = LocateRegistry.getRegistry("localhost", 1099);
-            // Cria a conexao com o Servidor
             conexao = (Conexao) registry.lookup("jokenpo");
 
+            // Criando Scanners necessários
             Scanner sc = new Scanner(System.in);
             Scanner sc2 = new Scanner(System.in);
-            String continuar = "s";
-            Boolean primeiroJogo = true;
             Scanner sc3 = new Scanner(System.in);
+            String continuar = "s";
 
+            // Cadastro de Jogador
+            System.out.println("--- Cadastro do Jogador:");
+            System.out.print("Digite seu Nome: ");
+            jogador = sc.next();
+
+            // Escolha do Modo de Jogo
+            System.out.println("\n--- Modo de Jogo:");
+            System.out.println("> '1' para JOGADOR x CPU\n> '2' para JOGADOR x JOGADOR");
+            System.out.print("Escolha o Modo de Jogo: ");
+            int escolha = sc2.nextInt();
+
+            // Cadastra o Jogador com base no Modo de Jogo
+            if (escolha == 1) {
+                tipoJogador = conexao.CadastrarJogador(jogador);
+            } else {
+                tipoJogador = conexao.CadastrarJogadores(jogador);
+            }
+
+            // Execução do Jogo
             while (continuar.toLowerCase().equals(("s"))) {
-                System.out.println("Digite: \n> '1' para JxCPU \n> '2' para Teste real com 02 Jogadores");
-                int escolha = sc2.nextInt();
 
                 if (escolha == 1) {
-                    // JxCPU -------------------------------------------------------
-                    System.err.println("\nExemplo de Jogo JxCPU");
+                    // JOGADOR x CPU -------------------------------------------
+                    System.err.println("\n--- JOGADOR x CPU");
 
-                    
-
-                    if (primeiroJogo) {
-                        System.out.print("Cadastro do Jogador: ");
-                        jogador = sc.next();
-
-                        tipoJogador = conexao.CadastrarJogador(jogador);
-                    }
                     if (tipoJogador != 0) {
                         System.out.print("Escolha: '1' para Pedra ou '2' para Papel ou '3' para Tesoura: ");
                         int jogada = sc2.nextInt();
                         conexao.Jogar(jogada, 1);
-                    } else if (tipoJogador == 0 && primeiroJogo ) {
+                    } else {
                         System.out.println("O Servidor está ocupado no momento!");
                         System.exit(0);
                     }
-                    String vencedor = conexao.DeterminarVencedor();
-                    System.out.println(vencedor);
 
-                    // Timer que verifica o vencedor a cada 05 segundos
-                    //timer = new Timer(3000, VerificarVencedor);
-                    //timer.setRepeats(true);
-                    //timer.start();
-                    // Timer que verifica o vencedor a cada 05 segundos
-                    // JxCPU -------------------------------------------------------
-                } else if (escolha == 2) {
-                    // Teste real com 02 Jogadores ---------------------------------
-                    System.err.println("\nExemplo de Teste real com 02 Jogadores");
-                    
-                    if (primeiroJogo){
-
-                    System.out.print("PorFavor informe seu nome: ");
-                    jogador = sc.next();
-
-                    tipoJogador = conexao.CadastrarJogadores(jogador);
+                    String[] vencedor = conexao.DeterminarVencedor();
+                    if (vencedor[1] != null) {
+                        System.out.println(vencedor[0] + "\nO Vencedor foi: " + vencedor[1]);
+                        if (vencedor[2].equals(String.valueOf(tipoJogador))) {
+                            vitorias++;
+                        } else {
+                            derrotas++;
+                        }
+                    } else {
+                        empates++;
+                        System.out.println(vencedor[0]);
                     }
+
+                    // Timer que verifica o vencedor a cada 05 segundos
+                    timer = new Timer(3000, VerificarVencedor);
+                    timer.setRepeats(true);
+                    timer.start();
+                    // Timer que verifica o vencedor a cada 05 segundos
+
+                } else if (escolha == 2) {
+                    // JOGADOR x JOGADOR ---------------------------------------
+                    System.err.println("\n--- JOGADOR x JOGADOR");
+
                     if (tipoJogador != 0) {
                         System.out.print("Escolha: '1' para Pedra ou '2' para Papel ou '3' para Tesoura: ");
                         int jogada = sc2.nextInt();
                         conexao.Jogar(jogada, tipoJogador);
-                    } else if (tipoJogador == 0 && primeiroJogo ) {
+                    } else {
                         System.out.println("O Servidor está ocupado no momento!");
                         System.exit(0);
-
                     }
-                    String vencedor = conexao.DeterminarVencedor();
-                    System.out.println(vencedor);
+
+                    String[] vencedor = conexao.DeterminarVencedor();
+                    if (vencedor[1] != null) {
+                        System.out.println(vencedor[0] + "\nO Vencedor foi: " + vencedor[1]);
+                        if (vencedor[2].equals(tipoJogador)) {
+                            vitorias++;
+                        } else {
+                            derrotas++;
+                        }
+                    } else {
+                        System.out.println(vencedor[0]);
+                    }
 
                     // Timer que verifica o vencedor a cada 05 segundos
-                    //timer = new Timer(3000, VerificarVencedor);
-                    //timer.setRepeats(true);
-                    //timer.start();
+                    timer = new Timer(3000, VerificarVencedor);
+                    timer.setRepeats(true);
+                    timer.start();
                     // Timer que verifica o vencedor a cada 05 segundos
-                    // Teste real com 02 Jogadores -------------------------------------------------------
+
                 }
-                System.out.println("Placar: |" + vitorias + " Vitorias | " + derrotas + " Derrotas | " + empates + " Empates |");
-                System.out.println("Deseja continuar?\n Digite 's' para continuar ou digite qualquer coisa para sair.");
+                System.out.println("\n--- PLACAR: |" + vitorias + " Vitorias | " + derrotas + " Derrotas | " + empates + " Empates |");
+                System.out.println("\nDeseja continuar jogando " + jogador + "? Digite 's' para continuar ou digite qualquer coisa para sair.");
                 continuar = sc3.nextLine();
-                if (continuar.toLowerCase().equals("s")) {
-                    primeiroJogo = false;
-                }
 
             }
         } catch (Exception e) {
@@ -123,7 +141,7 @@ public class App {
                 }
                 //Exemplo de Finalização de uma Partida em Execução ------------
                  */
-                String vencedor = conexao.DeterminarVencedor();
+                String[] vencedor = conexao.DeterminarVencedor();
                 if (vencedor != null) {
                     if (vencedor.equals("Partida Finalizada")) {
                         System.out.println(vencedor);

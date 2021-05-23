@@ -76,7 +76,9 @@ public class Partida implements Conexao {
     }
 
     @Override // Método acessível ao Cliente
-    public String DeterminarVencedor() {
+    public String[] DeterminarVencedor() {
+
+        String[] retorno = new String[3];
 
         if (!partidaEncerrada) {
             // Retorna o vencedor (Jogador 1 ou Jogador2), caso todas as jogadas tiverem sido realizadas
@@ -105,32 +107,36 @@ public class Partida implements Conexao {
                 } else {
 
                     if (vencedorDeterminado == 0) {
-                        System.out.println("Houve um Empate!\n"
-                                + "> " + jogadores[0] + " escolheu " + BuscarJogada(bckJogo, 1)
+                        System.out.println("> " + jogadores[0] + " escolheu " + BuscarJogada(bckJogo, 1)
                                 + " e " + jogadores[1] + " escolheu " + BuscarJogada(bckJogo, 2) + "\n");
                     }
 
                     if (!BuscarJogada(bckJogo, 1).equals("Partida Finalizada") && !BuscarJogada(bckJogo, 2).equals("Partida Finalizada")) {
-                        return ("Houve um Empate!\n"
-                                + "> " + jogadores[0] + " escolheu " + BuscarJogada(bckJogo, 1)
+                        retorno[0] = ("> " + jogadores[0] + " escolheu " + BuscarJogada(bckJogo, 1)
                                 + " e " + jogadores[1] + " escolheu " + BuscarJogada(bckJogo, 2));
+                        retorno[1] = null;
+                        retorno[2] = null;
+                        return retorno;
                     } else {
-                        return "Partida Finalizada";
+                        retorno[0] = "Partida Finalizada";
+                        return retorno;
                     }
                 }
 
                 if (vencedorDeterminado == 0) {
-                    System.out.println("Vencedor: " + jogadores[vencedor - 1] + "\n"
-                            + "> " + jogadores[0] + " escolheu " + BuscarJogada(bckJogo, 1)
+                    System.out.println("> " + jogadores[0] + " escolheu " + BuscarJogada(bckJogo, 1)
                             + " e " + jogadores[1] + " escolheu " + BuscarJogada(bckJogo, 2) + "\n");
                 }
 
                 if (!BuscarJogada(bckJogo, 1).equals("Partida Finalizada") && !BuscarJogada(bckJogo, 2).equals("Partida Finalizada")) {
-                    return ("Vencedor: " + jogadores[vencedor - 1] + "\n"
-                            + "> " + jogadores[0] + " escolheu " + BuscarJogada(bckJogo, 1)
+                    retorno[0] = ("> " + jogadores[0] + " escolheu " + BuscarJogada(bckJogo, 1)
                             + " e " + jogadores[1] + " escolheu " + BuscarJogada(bckJogo, 2));
+                    retorno[1] = jogadores[vencedor - 1];
+                    retorno[2] = String.valueOf(vencedor);
+                    return retorno;
                 } else {
-                    return "Partida Finalizada";
+                    retorno[0] = "Partida Finalizada";
+                    return retorno;
                 }
 
             } else {
@@ -138,7 +144,8 @@ public class Partida implements Conexao {
                 return null;
             }
         } else {
-            return "Partida Finalizada";
+            retorno[0] = "Partida Finalizada";
+            return retorno;
         }
 
     }

@@ -21,7 +21,7 @@ public interface Conexao extends Remote {
 
     // Verifica o resultado do Jogo, e determina quem foi o Vencedor em jogos JxJ e/ou JxCPU
     // Retorna um valor "string", que contém as informações do Jogo e Vencedor
-    public String DeterminarVencedor() throws RemoteException;
+    public String[] DeterminarVencedor() throws RemoteException;
 
     // Finaliza uma partida, e remove os 02 Jogadores da sessão
     // void - sem retorno
